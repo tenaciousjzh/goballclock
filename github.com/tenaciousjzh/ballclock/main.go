@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/tenaciousjzh/ballclock/validator"
 	"log"
 	"os"
 )
@@ -11,14 +11,31 @@ func init() {
 	log.SetOutput(os.Stdout) //sets it from default stderr to stdout
 }
 
-func main() {
-	numBalls := os.Args[1]
-	duration := os.Args[2]
+type BallClockArgs struct {
+	NumBalls int
+	Duration int
+}
 
-	if numBalls != nil {
-		fmt.Printf("numBalls = %s", numBalls)
+func main() {
+	clockArgs := parseArgs()
+
+}
+
+func parseArgs() BallClockArgs {
+	ballResult := validator.ValidateBallInput(os.Args[1])
+	numBalls := 0
+	if ballResult.IsValid {
+		numBalls = ballResult.Value
 	}
-	if duration != nil {
-		fmt.Printf("duration + %s", duration)
+	go log.Printf("numBalls = %d\n", numBalls)
+
+	duration := 0
+	if len(os.Args) > 2 {
+		durationResult := validator.ValidateDuration(os.Args[2])
+		if durationResult.IsValid {
+			duration = durationResult.Value
+		}
 	}
+	go log.Printf("duration = %d\n", duration)
+	return BallClockArgs{NumBalls: numBalls, Duration: duration}
 }
