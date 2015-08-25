@@ -48,7 +48,7 @@ func ValidateDuration(input string) ParsedIntResult {
 	return pr
 }
 
-func logIfInvalid(ParsedIntResult pr) {
+func logIfInvalid(pr ParsedIntResult) {
 	if pr.IsValid == false {
 		go log.Printf(pr.Error.Error())
 	}
