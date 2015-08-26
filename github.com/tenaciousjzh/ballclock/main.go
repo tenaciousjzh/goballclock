@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/tenaciousjzh/ballclock/clock"
 	"github.com/tenaciousjzh/ballclock/validator"
 	"log"
 	"os"
@@ -17,7 +18,8 @@ type BallClockArgs struct {
 }
 
 func main() {
-	clockArgs := parseArgs()
+	args := parseArgs()
+	bc := ballclock.NewBallClock(args.NumBalls, args.Duration)
 
 }
 
