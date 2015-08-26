@@ -19,8 +19,12 @@ type BallClockArgs struct {
 
 func main() {
 	args := parseArgs()
-	bc := ballclock.NewBallClock(args.NumBalls, args.Duration)
-
+	bc, err := clock.NewBallClock(args.NumBalls, args.Duration)
+	if err != nil {
+		log.Printf("Unable to create the Ball Clock. Error : %s", err.Error())
+	}
+	result := bc.RunClock()
+	log.Println(result)
 }
 
 func parseArgs() BallClockArgs {
@@ -29,6 +33,7 @@ func parseArgs() BallClockArgs {
 	if ballResult.IsValid {
 		numBalls = ballResult.Value
 	}
+
 	go log.Printf("numBalls = %d\n", numBalls)
 
 	duration := 0
