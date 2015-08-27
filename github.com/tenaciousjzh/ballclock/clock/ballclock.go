@@ -1,6 +1,7 @@
 package clock
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/tenaciousjzh/ballclock/util"
 	"github.com/tenaciousjzh/ballclock/validator"
@@ -29,7 +30,7 @@ type ballClock struct {
 	hourTrack    []int
 	reportMode   mode
 	debug        bool
-	stats        clockStats
+	stats        *clockStats
 	showCounts   bool
 }
 
@@ -59,9 +60,9 @@ func NewBallClock(numBalls int, duration int) (*ballClock, error) {
 	bc.hourTrack = make([]int, 0)
 
 	bc.reportMode = ReportDays
-	bc.debug = true
+	bc.debug = false
 	bc.showCounts = false
-	stats := clockStats{halfDays: 0, fullDays: 0, minCount: 0, fiveMinCount: 0, hourCount: 0}
+	stats := new(clockStats)
 	bc.stats = stats
 
 	if duration > 0 {
@@ -83,8 +84,7 @@ func (clock *ballClock) RunClock() string {
 	if clock.reportMode == ReportDays {
 		return clock.simulateDays()
 	} else {
-		//return clock.simulateDuration()
-		return ""
+		return clock.simulateDuration()
 	}
 }
 
@@ -97,7 +97,7 @@ func (clock *ballClock) simulateDays() string {
 		ballVal, clock.ballq = slice.Shift(clock.ballq)
 		clock.updMinTrack(ballVal)
 		counter++
-		if slice.Same(clock.ballq, clock.orig) || counter == 12 {
+		if slice.Same(clock.ballq, clock.orig) {
 			break
 		}
 	}
@@ -106,11 +106,45 @@ func (clock *ballClock) simulateDays() string {
 
 }
 
+type jsonResult struct {
+	Min     []int
+	FiveMin []int
+	Hour    []int
+	Main    []int
+}
+
+func (clock *ballClock) simulateDuration() string {
+	ballVal := -1
+	for i := 0; i < clock.duration; i++ {
+		ballVal, clock.ballq = slice.Shift(clock.ballq)
+		clock.updMinTrack(ballVal)
+	}
+	durationStats := jsonResult{
+		Min:     clock.minTrack,
+		FiveMin: clock.fiveMinTrack,
+		Hour:    clock.hourTrack,
+		Main:    clock.ballq,
+	}
+
+	result, err := json.Marshal(durationStats)
+	if err != nil {
+		log.Println("error: ", err)
+	}
+	return string(result)
+}
+
 func (clock *ballClock) updMinTrack(ballVal int) {
+	if clock.debug {
+		log.Println("==========================================")
+		log.Println("Calling updMinTrack")
+	}
 	stats := clock.stats
 	stats.minCount += 1
 	if len(clock.minTrack) == minTrackCapacity {
-		log.Printf("minTrack length: %d, minTrackCapacity: %d", len(clock.minTrack), minTrackCapacity)
+		if clock.debug {
+			log.Printf("minTrack full! Adding balVall %d to next track.", ballVal)
+			log.Printf("minTrack length: %d, minTrackCapacity: %d", len(clock.minTrack), minTrackCapacity)
+		}
 		//Put the balls on the track in reverse order
 		//back into the ballq
 		for i, val := range clock.minTrack {
@@ -124,7 +158,9 @@ func (clock *ballClock) updMinTrack(ballVal int) {
 		//Put the next ball from ballq into the next track
 		clock.updFiveMinTrack(ballVal)
 	} else {
-		log.Printf("adding ballVal %d to minTrack", ballVal)
+		if clock.debug {
+			log.Printf("adding ballVal %d to minTrack", ballVal)
+		}
 		clock.minTrack = slice.Push(clock.minTrack, ballVal)
 
 	}
@@ -134,9 +170,18 @@ func (clock *ballClock) updMinTrack(ballVal int) {
 }
 
 func (clock *ballClock) updFiveMinTrack(ballVal int) {
+	if clock.debug {
+		log.Println("==========================================")
+		log.Println("Calling updFiveMinTrack")
+	}
 	stats := clock.stats
 	stats.fiveMinCount += 1
 	if len(clock.fiveMinTrack) == fiveMinTrackCapacity {
+		if clock.debug {
+			log.Printf("fiveMinTrack full! Adding balVall %d to next track.", ballVal)
+			log.Printf("fiveMinTrack length: %d, fiveMinTrackCapacity: %d", len(clock.fiveMinTrack), fiveMinTrackCapacity)
+		}
+
 		for i, val := range clock.fiveMinTrack {
 			if clock.debug && clock.showCounts {
 				log.Printf("fiveMinTrack[%d] = %d", i, val)
@@ -145,16 +190,28 @@ func (clock *ballClock) updFiveMinTrack(ballVal int) {
 			lastVal, clock.fiveMinTrack = slice.Pop(clock.fiveMinTrack)
 			clock.ballq = slice.Push(clock.ballq, lastVal)
 		}
+
 		clock.updHourTrack(ballVal)
 	} else {
+		if clock.debug {
+			log.Printf("adding ballVal %d to fiveMinTrack", ballVal)
+		}
 		clock.fiveMinTrack = slice.Push(clock.fiveMinTrack, ballVal)
 	}
 }
 
 func (clock *ballClock) updHourTrack(ballVal int) {
+	if clock.debug {
+		log.Println("==========================================")
+		log.Println("Calling updHourTrack")
+	}
 	stats := clock.stats
 	stats.hourCount += 1
 	if len(clock.hourTrack) == hourTrackCapacity {
+		if clock.debug {
+			log.Printf("hourTrack full! Adding balVall %d to next track.", ballVal)
+			log.Printf("hourTrack length: %d, hourTrackCapacity: %d", len(clock.hourTrack), hourTrackCapacity)
+		}
 		for i, val := range clock.hourTrack {
 			if clock.debug && clock.showCounts {
 				log.Printf("hourTrack[%d] = %d", i, val)
@@ -163,19 +220,27 @@ func (clock *ballClock) updHourTrack(ballVal int) {
 			lastVal, clock.hourTrack = slice.Pop(clock.hourTrack)
 			clock.ballq = slice.Push(clock.ballq, lastVal)
 		}
+
 		clock.ballq = slice.Push(clock.ballq, ballVal)
 		stats.halfDays += 1
 		clock.printCounts(ballVal)
 	} else {
+		if clock.debug {
+			log.Printf("adding ballVal %d to hourTrack", ballVal)
+		}
 		clock.hourTrack = slice.Push(clock.hourTrack, ballVal)
 	}
 }
 
 func (clock *ballClock) printCounts(ballVal int) {
 	if clock.debug {
+		log.Println("====================================")
+		log.Println("============== Stats ===============")
+		s := clock.stats
 		log.Printf("ballVal: %d\n", ballVal)
-		log.Printf("minCount: %d, fiveMinCount: %d, hourCount: %d\n", clock.stats.minCount, clock.stats.fiveMinCount, clock.stats.hourCount)
-		log.Printf("halfDays: %d", clock.stats.halfDays)
+		log.Printf("minCount: %d, fiveMinCount: %d, hourCount: %d\n", s.minCount, s.fiveMinCount, s.hourCount)
+		log.Printf("halfDays: %d", s.halfDays)
+		log.Println("====================================")
 	}
 }
 
@@ -183,5 +248,7 @@ func (clock *ballClock) PrintDiagnostic() {
 	if clock.debug {
 		log.Printf("ballq: %s\n", clock.ballq)
 		log.Printf("minTrack: %s\n", clock.minTrack)
+		log.Printf("fiveMinTrack: %s\n", clock.fiveMinTrack)
+		log.Printf("hourTrack: %s\n", clock.hourTrack)
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/tenaciousjzh/ballclock/clock"
 	"github.com/tenaciousjzh/ballclock/validator"
 	"log"
@@ -24,7 +25,7 @@ func main() {
 		log.Printf("Unable to create the Ball Clock. Error : %s", err.Error())
 	}
 	result := bc.RunClock()
-	log.Println(result)
+	fmt.Println(result)
 }
 
 func parseArgs() BallClockArgs {
@@ -34,7 +35,7 @@ func parseArgs() BallClockArgs {
 		numBalls = ballResult.Value
 	}
 
-	go log.Printf("numBalls = %d\n", numBalls)
+	//go log.Printf("numBalls = %d\n", numBalls)
 
 	duration := 0
 	if len(os.Args) > 2 {
@@ -43,6 +44,6 @@ func parseArgs() BallClockArgs {
 			duration = durationResult.Value
 		}
 	}
-	go log.Printf("duration = %d\n", duration)
+	//go log.Printf("duration = %d\n", duration)
 	return BallClockArgs{NumBalls: numBalls, Duration: duration}
 }
