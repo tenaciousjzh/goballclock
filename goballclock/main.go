@@ -1,11 +1,11 @@
 package main
 
 import (
-	"clock"
 	"fmt"
+	"github.com/x/goballclock/clock"
+	"github.com/x/goballclock/validator"
 	"log"
 	"os"
-	"validator"
 )
 
 func init() {
