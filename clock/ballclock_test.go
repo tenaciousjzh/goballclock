@@ -34,3 +34,15 @@ func TestNewBallClockValidBallCount(t *testing.T) {
 		t.Errorf("Ballclock should have been initialized correctly with numBalls value of: %d, and duration: %d", numBalls, duration)
 	}
 }
+
+func TestBallClockInvalidDuration(t *testing.T) {
+	numBalls, duration := 30, -1
+	bc, err := NewBallClock(numBalls, duration)
+	if bc != nil {
+		t.Errorf("Ballclock should have been set to nil based on duration provided: %d", duration)
+	}
+
+	if err == nil {
+		t.Errorf("With duration value of %d, error should have been: %s", duration, validator.InvalidDuration)
+	}
+}
