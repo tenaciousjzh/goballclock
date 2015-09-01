@@ -3,4 +3,4 @@ language: go
 go:
         - 1.5
 install:
-        - export GOPATH=${TRAVIS_BUILD_DIR}
+        - export GOPATH=${TRAVIS_BUILD_DIR}/gopath
