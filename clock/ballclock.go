@@ -3,8 +3,8 @@ package clock
 import (
 	"encoding/json"
 	"errors"
+	"github.com/x/goballclock/slice"
 	"log"
-	"slice"
 	"strconv"
 	"validator"
 )
