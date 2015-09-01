@@ -1,8 +1,8 @@
 package clock
 
 import (
+	"github.com/x/goballclock/validator"
 	"testing"
-	"validator"
 )
 
 func TestNewBallClockBelowMinBallCount(t *testing.T) {
