@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/x/goballclock/slice"
+	"github.com/x/goballclock/validator"
 	"log"
 	"strconv"
-	"validator"
 )
 
 const minTrackCapacity int = 4
