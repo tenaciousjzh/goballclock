@@ -42,6 +42,9 @@ type clockStats struct {
 	hourCount    int
 }
 
+//NewBallClock is a constructor function for creating a ballClock
+//object. This function returns a ballClock pointer and an error
+//object if construction failed.
 func NewBallClock(numBalls int, duration int) (*ballClock, error) {
 
 	if validator.IsValidBallRange(numBalls) == false {
@@ -81,6 +84,14 @@ func loadBallQueue(size int) []int {
 	return q
 }
 
+//RunClock is called once the ballClock has been successfully
+//created. This function returns a message based on the processing
+//performed. If one argument is provided, the number of days
+//that elapse until the queue of balls returns to its original
+//order will be returned.
+//
+//If the second argument of duration is provided, it will
+//simulate the duration and print a JSON string.
 func (clock *ballClock) RunClock() string {
 	if clock.reportMode == ReportDays {
 		return clock.simulateDays()
@@ -245,6 +256,9 @@ func (clock *ballClock) printCounts(ballVal int) {
 	}
 }
 
+//PrintDiagnostic can be used as a debugging tool to see the
+//state of a ballClock object. This is generally turned on by
+//setting the debug flag to true.
 func (clock *ballClock) PrintDiagnostic() {
 	if clock.debug {
 		log.Printf("ballq: %s\n", clock.ballq)
