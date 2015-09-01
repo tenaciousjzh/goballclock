@@ -1,11 +1,11 @@
 package main
 
 import (
+	"clock"
 	"fmt"
-	"github.com/tenaciousjzh/ballclock/clock"
-	"github.com/tenaciousjzh/ballclock/validator"
 	"log"
 	"os"
+	"validator"
 )
 
 func init() {

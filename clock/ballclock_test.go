@@ -1,8 +1,8 @@
 package clock
 
 import (
-	"github.com/tenaciousjzh/ballclock/validator"
 	"testing"
+	"validator"
 )
 
 func TestNewBallClockBelowMinBallCount(t *testing.T) {

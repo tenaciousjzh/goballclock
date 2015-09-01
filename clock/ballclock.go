@@ -3,10 +3,10 @@ package clock
 import (
 	"encoding/json"
 	"errors"
-	"github.com/tenaciousjzh/ballclock/util"
-	"github.com/tenaciousjzh/ballclock/validator"
 	"log"
+	"slice"
 	"strconv"
+	"validator"
 )
 
 const minTrackCapacity int = 4
