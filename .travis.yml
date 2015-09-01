@@ -5,4 +5,4 @@ go:
 install:
         - export TRAVIS_BUILD_DIR=$HOME/gopath
         - export GOPATH=${TRAVIS_BUILD_DIR}/src
-scrtip: go test -v github.com/tenaciousjzh/ballclock/..
+script: go test -v github.com/tenaciousjzh/ballclock/..
