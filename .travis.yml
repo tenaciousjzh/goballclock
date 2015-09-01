@@ -4,9 +4,9 @@ go:
         - 1.5
 install:
         - export GOPATH="$HOME/gopath"
-        - mkdir -p "$GOPATH/src/github.com/tenaciousjzh"
-        - mv "$TRAVIS_BUILD_DIR" "$GOPATH/src/github.com/tenaciousjzh/goballclock"
-        - go get -v -t -d github.com/tenaciousjzh/goballclock/...
+        - mkdir -p "$GOPATH/src/github.com/x"
+        - mv "$TRAVIS_BUILD_DIR" "$GOPATH/src/github.com/x/goballclock"
+        - go get -v -t -d github.com/x/goballclock/...
 
 script:
-        - go test -v github.com/tenaciousjzh/goballclock/...
+        - go test -v github.com/x/goballclock/...
