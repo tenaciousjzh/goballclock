@@ -23,6 +23,14 @@ func TestNewBallClockWithAboveMaxBallCount(t *testing.T) {
 		t.Errorf("Ballclock should have been set to nil based on invalid argument of %d provided.", numBalls)
 	}
 	if err == nil {
-		t.Errorf("With numBalls valud of %d, error should have been: %s", numBalls, validator.InvalidBallInput)
+		t.Errorf("With numBalls value of %d, error should have been: %s", numBalls, validator.InvalidBallInput)
+	}
+}
+
+func TestNewBallClockValidBallCount(t *testing.T) {
+	numBalls, duration := 30, 0
+	bc, err := NewBallClock(numBalls, duration)
+	if bc == nil || err != nil {
+		t.Errorf("Ballclock should have been initialized correctly with numBalls value of: %d, and duration: %d", numBalls, duration)
 	}
 }
