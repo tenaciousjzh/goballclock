@@ -43,15 +43,16 @@ type clockStats struct {
 }
 
 func NewBallClock(numBalls int, duration int) (*ballClock, error) {
-	bc := new(ballClock)
-	bc.numBalls = numBalls
+
 	if validator.IsValidBallRange(numBalls) == false {
-		return bc, errors.New(validator.InvalidBallInput)
+		return nil, errors.New(validator.InvalidBallInput)
 	}
 	if validator.IsValidDuration(duration) == false {
-		return bc, errors.New(validator.InvalidDuration)
+		return nil, errors.New(validator.InvalidDuration)
 	}
-
+	bc := new(ballClock)
+	bc.numBalls = numBalls
+	bc.duration = duration
 	bc.ballq = loadBallQueue(numBalls)
 	bc.orig = make([]int, numBalls)
 	copy(bc.orig, bc.ballq)
