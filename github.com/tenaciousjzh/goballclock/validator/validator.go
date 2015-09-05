@@ -79,6 +79,13 @@ func IsValidDuration(duration int) bool {
 	return true
 }
 
+func IsMissingArgs(args []string) bool {
+	if len(args) == 1 {
+		return true
+	}
+	return false
+}
+
 func logIfInvalid(pr ParsedIntResult) {
 	if pr.IsValid == false {
 		go log.Printf(pr.Error.Error())

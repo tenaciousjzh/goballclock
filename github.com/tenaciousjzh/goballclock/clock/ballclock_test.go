@@ -1,7 +1,7 @@
 package clock
 
 import (
-	"github.com/x/goballclock/validator"
+	"github.com/tenaciousjzh/goballclock/validator"
 	"testing"
 )
 

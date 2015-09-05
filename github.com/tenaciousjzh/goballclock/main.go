@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/x/goballclock/clock"
-	"github.com/x/goballclock/validator"
+	"github.com/davecheney/profile"
+	"github.com/tenaciousjzh/goballclock/clock"
+	"github.com/tenaciousjzh/goballclock/validator"
 	"log"
 	"os"
+	"time"
 )
 
 func init() {
@@ -19,6 +21,8 @@ type BallClockArgs struct {
 }
 
 func main() {
+	defer profile.Start(profile.CPUProfile).Stop()
+	start := time.Now()
 	args := parseArgs()
 	bc, err := clock.NewBallClock(args.NumBalls, args.Duration)
 	if err != nil {
@@ -26,16 +30,21 @@ func main() {
 	}
 	result := bc.RunClock()
 	fmt.Println(result)
+	end := time.Now()
+	log.Printf("Elapsed time : %s", end.Sub(start).String())
 }
 
 func parseArgs() BallClockArgs {
+	if validator.IsMissingArgs(os.Args) {
+		log.Println("You must supply at least one argument of how many balls to add to the clock to proceed.")
+		os.Exit(1)
+	}
+
 	ballResult := validator.ValidateBallInput(os.Args[1])
 	numBalls := 0
 	if ballResult.IsValid {
 		numBalls = ballResult.Value
 	}
-
-	//go log.Printf("numBalls = %d\n", numBalls)
 
 	duration := 0
 	if len(os.Args) > 2 {
